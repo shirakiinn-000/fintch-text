@@ -11,6 +11,7 @@ import duckdb
 DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\上市公司招聘数据")
 DEFAULT_OUTPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
 DEFAULT_TERM_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\codex\fintech 文本提取\dict\召回词")
+DEFAULT_TITLE_COLS = ["招聘岗位"]
 DEFAULT_YEARS = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
 DEFAULT_DUTY_COL = "职位描述"
 FETCH_SIZE = 50_000
@@ -139,6 +140,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--term-dir", type=Path, default=DEFAULT_TERM_DIR)
+    parser.add_argument(
+        "--title-col",
+        default=None,
+        help="Job title column to concatenate before duty text. Defaults to 岗位名称, then 招聘岗位 if present.",
+    )
     parser.add_argument("--duty-col", default=DEFAULT_DUTY_COL)
     parser.add_argument(
         "--max-rows",
@@ -376,6 +382,26 @@ def iter_source_rows(
             yield total_rows, row
 
 
+def resolve_title_col(header: list[str], title_col: str | None) -> str:
+    if title_col:
+        if title_col not in header:
+            raise ValueError(f"Source CSV missing title column: {title_col}")
+        return title_col
+
+    for candidate in DEFAULT_TITLE_COLS:
+        if candidate in header:
+            return candidate
+    raise ValueError(f"Source CSV missing title column. Tried: {DEFAULT_TITLE_COLS}")
+
+
+def build_recall_text(row: dict[str, str], title_col: str, duty_col: str) -> str:
+    parts = [
+        row.get(title_col, "").strip(),
+        row.get(duty_col, "").strip(),
+    ]
+    return "\n".join(part for part in parts if part)
+
+
 def output_path_for_year(output_dir: Path, year: int) -> Path:
     return output_dir / f"advisor_recall_labeled_{year}.csv"
 
@@ -475,6 +501,7 @@ def process_year(
     csv_path = input_path_for_year(args.input_dir, year)
     out_path = output_path_for_year(args.output_dir, year)
     header = get_header(con, csv_path)
+    title_col = resolve_title_col(header, args.title_col)
     if args.duty_col not in header:
         raise ValueError(f"{csv_path} missing duty column: {args.duty_col}")
 
@@ -489,7 +516,7 @@ def process_year(
         for source_total, row in rows:
             total_rows = source_total
             classification = classify_text(
-                row.get(args.duty_col, ""),
+                build_recall_text(row, title_col, args.duty_col),
                 term_sets,
                 c_forward_pattern,
                 c_reverse_pattern,
