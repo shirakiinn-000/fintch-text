@@ -296,13 +296,14 @@ def classify_text(
     )
     d_hits = find_terms(text, term_sets["D"])
     e_hits = find_terms(text, term_sets["E"])
+    c_bound = bool(c_left_hits and c_right_hits)
 
     if a_hits:
         recall_level = "A_high"
+    elif c_bound:
+        recall_level = "C_bound"
     elif b_hits:
         recall_level = "B_broad"
-    elif c_left_hits and c_right_hits:
-        recall_level = "C_bound"
     else:
         pool, sample_stratum, review_priority = UNRECALLED_RISK if e_hits else UNRECALLED_CLEAN
         return {
