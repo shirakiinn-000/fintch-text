@@ -8,13 +8,11 @@ import duckdb
 
 #从8个池抽样，保证p1，p2抽满
 
-DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\ESG\召回岗位数据")
-DEFAULT_OUTPUT = DEFAULT_INPUT_DIR / "esg_recall_weighted_pool_sample_2022_2026.csv"
-YEARS = list(range(2022, 2027))
+DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
+DEFAULT_OUTPUT = DEFAULT_INPUT_DIR / "advisor_recall_weighted_pool_sample_2022_2026.csv"
+YEARS = list(range(2014, 2027))
 POOLS = [f"p{i}" for i in range(1, 9)]
 
-# p1+p2 are fully sampled and treated as 30% of the final sample.
-# The remaining 70% is allocated to p3-p8 according to the rule document.
 P12_TOTAL_SHARE = 0.30
 REMAINING_POOL_WEIGHTS = {
     "p3": 16,
@@ -221,7 +219,7 @@ def export_sample(con: duckdb.DuckDBPyConnection, output: Path, seed: int) -> in
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Sample ESG recall rows from p1-p8 pools with DuckDB and year-weighted quotas."
+        description="Sample Advisor recall rows from p1-p8 pools with DuckDB and year-weighted quotas."
     )
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)

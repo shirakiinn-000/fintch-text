@@ -129,6 +129,17 @@ ACTION_WORDS = [
     "考核",
 ]
 
+CONNECTOR_WORDS = [
+    "基于",
+    "根据",
+    "结合",
+    "围绕",
+    "面向",
+    "匹配",
+    "适配",
+    "针对",
+]
+
 # C_left.txt 和 C_right.txt 应保存投顾任务链的原子词，建议一行一个词；
 # read_terms() 也兼容同一行用 、 , ， ; ； 分隔多个词。
 
@@ -222,12 +233,14 @@ def build_c_bound_pattern(left_terms: list[str], right_terms: list[str]) -> re.P
     left_pattern = "|".join(re.escape(term) for term in sorted(left_terms, key=len, reverse=True) if term)
     right_pattern = "|".join(re.escape(term) for term in sorted(right_terms, key=len, reverse=True) if term)
     action_pattern = "|".join(re.escape(term) for term in ACTION_WORDS)
+    connector_pattern = "|".join(re.escape(term) for term in CONNECTOR_WORDS)
 
     if not left_pattern or not right_pattern:
         return re.compile(r"a^")
 
     return re.compile(
-        rf"({action_pattern})[^。；;\n]{{0,50}}({left_pattern})[^。；;\n]{{0,80}}({right_pattern})",
+        rf"((?:{action_pattern})|(?:{connector_pattern}))"
+        rf"[^。；;\n]{{0,50}}({left_pattern})[^。；;\n]{{0,80}}({right_pattern})",
         flags=re.IGNORECASE,
     )
 
