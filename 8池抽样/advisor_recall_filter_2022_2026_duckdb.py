@@ -8,10 +8,10 @@ import duckdb
 
 # 按8个池召回投顾服务职能岗位
 
-DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\ESG\上市公司招聘数据")
-DEFAULT_OUTPUT_DIR = Path(r"E:\学习资料\研\我的论文\投顾\召回岗位数据")
-DEFAULT_TERM_DIR = Path(r"E:\学习资料\研\我的论文\投顾\工程文件\召回词")
-DEFAULT_YEARS = [2022, 2023, 2024, 2025, 2026]
+DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\上市公司招聘数据")
+DEFAULT_OUTPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
+DEFAULT_TERM_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\codex\fintech 文本提取\dict\召回词")
+DEFAULT_YEARS = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
 DEFAULT_DUTY_COL = "职位描述"
 FETCH_SIZE = 50_000
 TERM_SPLIT_PATTERN = re.compile(r"[、,，;；]+")
@@ -130,28 +130,6 @@ ACTION_WORDS = [
 
 # C_left.txt 和 C_right.txt 应保存投顾任务链的原子词，建议一行一个词；
 # read_terms() 也兼容同一行用 、 , ， ; ； 分隔多个词。
-ADVISOR_OBJECT_WORDS = [
-    "客户风险",
-    "风险偏好",
-    "风险承受能力",
-    "投资目标",
-    "资产状况",
-    "客户画像",
-    "资产配置",
-    "组合配置",
-    "理财规划",
-    "产品匹配",
-    "投后服务",
-    "账户诊断",
-    "风险",
-    "适当性",
-    "风险揭示",
-    "留痕",
-    "回访",
-    "投诉",
-    "信息披露",
-]
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(

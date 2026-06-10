@@ -8,6 +8,7 @@ from pathlib import Path
 
 import duckdb
 
+#从上市公司岗位中按 dict中的 投顾召回词.txt 直接召回约5w岗位
 
 ROOT = Path(__file__).resolve().parent
 DICT_PATH = ROOT / "dict" / "投顾召回词.txt"
