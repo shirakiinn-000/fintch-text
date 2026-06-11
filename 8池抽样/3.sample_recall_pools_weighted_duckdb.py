@@ -13,17 +13,17 @@ DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二�
 DEFAULT_OUTPUT = DEFAULT_INPUT_DIR / "advisor_recall_weighted_pool_sample_2014_2026.csv"
 YEARS = list(range(2014, 2027))
 POOLS = [f"p{i}" for i in range(1, 9)]
-DEFAULT_SAMPLE_SIZE = 2000
+DEFAULT_SAMPLE_SIZE = 10000
 
 POOL_SAMPLE_SHARES = {
-    "p1": 24,
-    "p2": 14,
-    "p3": 15,
-    "p4": 8,
-    "p5": 16,
-    "p6": 8,
-    "p7": 10,
-    "p8": 5,
+    "p1": 10,
+    "p2": 15,
+    "p3": 14,
+    "p4": 17,
+    "p5": 8,
+    "p6": 13,
+    "p7": 8,
+    "p8": 15,
 }
 
 
