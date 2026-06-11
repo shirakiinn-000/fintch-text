@@ -6,7 +6,7 @@ from pathlib import Path
 #统计8池的样本分布
 
 DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
-DEFAULT_OUTPUT = Path("advisor_recall_sample_pool_p1_p8_counts.csv")
+DEFAULT_OUTPUT = Path("advisor_recall_sample_pool_p1_p8_counts5.csv")
 YEARS = range(2014, 2027)
 POOLS = [f"p{i}" for i in range(1, 9)]
 P1_P6_POOLS = POOLS[:6]
