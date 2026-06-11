@@ -6,21 +6,24 @@ from pathlib import Path
 
 import duckdb
 
-#从8个池抽样，保证p1，p2抽满
+# 从8个池按目标比例抽样，池内按年份加权平均分配
 
+UTF8_BOM = b"\xef\xbb\xbf"
 DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
-DEFAULT_OUTPUT = DEFAULT_INPUT_DIR / "advisor_recall_weighted_pool_sample_2022_2026.csv"
+DEFAULT_OUTPUT = DEFAULT_INPUT_DIR / "advisor_recall_weighted_pool_sample_2014_2026.csv"
 YEARS = list(range(2014, 2027))
 POOLS = [f"p{i}" for i in range(1, 9)]
+DEFAULT_SAMPLE_SIZE = 10000
 
-P12_TOTAL_SHARE = 0.30
-REMAINING_POOL_WEIGHTS = {
-    "p3": 16,
-    "p4": 14,
-    "p5": 10,
-    "p6": 12,
-    "p7": 14,
-    "p8": 4,
+POOL_SAMPLE_SHARES = {
+    "p1": 24,
+    "p2": 14,
+    "p3": 15,
+    "p4": 8,
+    "p5": 16,
+    "p6": 8,
+    "p7": 10,
+    "p8": 5,
 }
 
 
@@ -29,7 +32,7 @@ def sql_literal(value: str) -> str:
 
 
 def make_file_list(input_dir: Path) -> list[Path]:
-    paths = [input_dir / f"esg_recall_labeled_{year}.csv" for year in YEARS]
+    paths = [input_dir / f"advisor_recall_labeled_{year}.csv" for year in YEARS]
     missing = [str(path) for path in paths if not path.exists()]
     if missing:
         raise FileNotFoundError("Missing input CSV(s): " + "; ".join(missing))
@@ -134,25 +137,18 @@ def fetch_counts(con: duckdb.DuckDBPyConnection) -> tuple[dict[str, int], dict[t
 def build_quotas(
     year_totals: dict[str, int],
     pool_year_counts: dict[tuple[str, str], int],
+    sample_size: int,
 ) -> tuple[int, dict[tuple[str, str], int], dict[str, int]]:
-    p1_total = sum(pool_year_counts.get(("p1", str(year)), 0) for year in YEARS)
-    p2_total = sum(pool_year_counts.get(("p2", str(year)), 0) for year in YEARS)
-    p12_total = p1_total + p2_total
-    final_total = math.ceil(p12_total / P12_TOTAL_SHARE)
+    if sample_size <= 0:
+        raise ValueError("sample_size must be positive")
 
-    pool_targets = {"p1": p1_total, "p2": p2_total}
-    pool_targets.update(largest_remainder(final_total - p12_total, REMAINING_POOL_WEIGHTS))
+    final_total = sample_size
+    pool_targets = largest_remainder(final_total, POOL_SAMPLE_SHARES)
 
     year_weights = {str(year): year_totals[str(year)] for year in YEARS}
     quotas: dict[tuple[str, str], int] = {}
 
     for pool in POOLS:
-        if pool in {"p1", "p2"}:
-            for year in YEARS:
-                year_key = str(year)
-                quotas[(pool, year_key)] = pool_year_counts.get((pool, year_key), 0)
-            continue
-
         caps = {str(year): pool_year_counts.get((pool, str(year)), 0) for year in YEARS}
         year_allocation = allocate_with_caps(pool_targets[pool], year_weights, caps)
         for year in YEARS:
@@ -178,6 +174,12 @@ def create_quota_table(con: duckdb.DuckDBPyConnection, quotas: dict[tuple[str, s
     con.execute("CREATE TEMP TABLE quota(pool VARCHAR, source_year VARCHAR, quota INTEGER)")
     rows = [(pool, year, quota) for (pool, year), quota in quotas.items() if quota > 0]
     con.executemany("INSERT INTO quota VALUES (?, ?, ?)", rows)
+
+
+def ensure_utf8_sig(path: Path) -> None:
+    content = path.read_bytes()
+    if not content.startswith(UTF8_BOM):
+        path.write_bytes(UTF8_BOM + content)
 
 
 def export_sample(con: duckdb.DuckDBPyConnection, output: Path, seed: int) -> int:
@@ -213,6 +215,7 @@ def export_sample(con: duckdb.DuckDBPyConnection, output: Path, seed: int) -> in
         WITH (HEADER true, DELIMITER ',')
         """
     )
+    ensure_utf8_sig(output)
 
     return int(con.execute(f"SELECT count(*) FROM read_csv_auto({output_sql}, header=true, all_varchar=true)").fetchone()[0])
 
@@ -223,6 +226,7 @@ def main() -> None:
     )
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE, help="Total sample size.")
     parser.add_argument("--seed", type=int, default=20260524)
     parser.add_argument("--write-quota", action="store_true", help="Also write a quota CSV next to the sample output.")
     args = parser.parse_args()
@@ -231,14 +235,13 @@ def main() -> None:
     con = duckdb.connect()
     create_source_table(con, paths)
     year_totals, pool_year_counts = fetch_counts(con)
-    final_total, quotas, pool_targets = build_quotas(year_totals, pool_year_counts)
+    final_total, quotas, pool_targets = build_quotas(year_totals, pool_year_counts, args.sample_size)
     create_quota_table(con, quotas)
     sampled_rows = export_sample(con, args.output, args.seed)
 
     if args.write_quota:
         write_quota_table(args.output, quotas, pool_targets)
 
-    print(f"p1+p2 full sample count: {pool_targets['p1'] + pool_targets['p2']}")
     print(f"target total sample size: {final_total}")
     print(f"sampled rows: {sampled_rows}")
     print("pool targets: " + ", ".join(f"{pool}={pool_targets[pool]}" for pool in POOLS))

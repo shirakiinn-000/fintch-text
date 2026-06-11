@@ -9,7 +9,7 @@ from pathlib import Path
 
 #任何文件，清除马克数据网水印和html标签
 
-DEFAULT_INPUT = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\投顾数据\投顾召回岗位_readable.csv")
+DEFAULT_INPUT = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026_readable.csv")
 DESC_COL = "职位描述"
 
 MARK_NAME = r"马\s*[-－—]?\s*克\s*[-－—]?\s*数\s*[-－—]?\s*据\s*[-－—]?\s*网?"

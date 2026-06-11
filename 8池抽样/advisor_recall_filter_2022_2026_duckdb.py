@@ -39,6 +39,8 @@ TERM_FILES = {
     "C_RIGHT": "C_right.txt",
     "D": "D.txt",
     "E": "E.txt",
+    "ACTION_WORDS": "action_words.txt",
+    "CONNECTOR_WORDS": "connector_words.txt",
 }
 
 POOL_RULES = {
@@ -52,93 +54,6 @@ POOL_RULES = {
 
 UNRECALLED_CLEAN = ("p7", "s7_unrecalled_random", "medium")
 UNRECALLED_RISK = ("p8", "s8_unrecalled_risk", "medium")
-
-ACTION_WORDS = [
-    "负责",
-    "主导",
-    "参与",
-    "推进",
-    "推动",
-    "协助",
-    "支持",
-    "配合",
-    "组织",
-    "开展",
-    "实施",
-    "执行",
-    "完成",
-    "落地",
-    "了解",
-    "识别",
-    "收集",
-    "挖掘",
-    "分析",
-    "评估",
-    "测评",
-    "判断",
-    "诊断",
-    "提供",
-    "出具",
-    "制定",
-    "设计",
-    "构建",
-    "生成",
-    "配置",
-    "匹配",
-    "推荐",
-    "筛选",
-    "遴选",
-    "规划",
-    "调整",
-    "优化",
-    "跟踪",
-    "监控",
-    "解释",
-    "说明",
-    "揭示",
-    "沟通",
-    "回访",
-    "陪伴",
-    "维护",
-    "处理",
-    "审核",
-    "复核",
-    "校验",
-    "检查",
-    "质检",
-    "留痕",
-    "披露",
-    "管理",
-    "监督",
-    "调仓",
-    "再平衡",
-    "申购",
-    "赎回",
-    "转换",
-    "办理",
-    "核验",
-    "建设",
-    "建立",
-    "搭建",
-    "开发",
-    "运营",
-    "训练",
-    "校准",
-    "培训",
-    "督导",
-    "考核",
-]
-
-CONNECTOR_WORDS = [
-    "基于",
-    "根据",
-    "结合",
-    "围绕",
-    "面向",
-    "匹配",
-    "适配",
-    "针对",
-]
 
 # C_left.txt 和 C_right.txt 应保存投顾任务链的原子词，建议一行一个词；
 # read_terms() 也兼容同一行用 、 , ， ; ； 分隔多个词。
@@ -207,7 +122,7 @@ def load_term_sets(term_dir: Path) -> dict[str, list[str]]:
 
 
 def validate_term_sets(term_sets: dict[str, list[str]]) -> None:
-    required_names = {"A", "B", "C_LEFT", "C_RIGHT", "D", "E"}
+    required_names = {"A", "B", "C_LEFT", "C_RIGHT", "D", "E", "ACTION_WORDS", "CONNECTOR_WORDS"}
     missing = sorted(name for name in required_names if not term_sets.get(name))
     if missing:
         raise ValueError(f"Missing or empty advisor term sets: {missing}")
@@ -229,28 +144,40 @@ def make_literal_pattern(terms: list[str]) -> re.Pattern[str]:
     return re.compile("|".join(escaped), flags=re.IGNORECASE)
 
 
-def build_c_bound_pattern(left_terms: list[str], right_terms: list[str]) -> re.Pattern[str]:
+def build_c_bound_pattern(
+    left_terms: list[str],
+    right_terms: list[str],
+    action_words: list[str],
+    connector_words: list[str],
+) -> re.Pattern[str]:
     left_pattern = "|".join(re.escape(term) for term in sorted(left_terms, key=len, reverse=True) if term)
     right_pattern = "|".join(re.escape(term) for term in sorted(right_terms, key=len, reverse=True) if term)
-    action_pattern = "|".join(re.escape(term) for term in ACTION_WORDS)
-    connector_pattern = "|".join(re.escape(term) for term in CONNECTOR_WORDS)
+    action_pattern = "|".join(re.escape(term) for term in sorted(action_words, key=len, reverse=True) if term)
+    connector_pattern = "|".join(re.escape(term) for term in sorted(connector_words, key=len, reverse=True) if term)
 
-    if not left_pattern or not right_pattern:
+    if not left_pattern or not right_pattern or not action_pattern:
         return re.compile(r"a^")
 
+    lead_pattern = action_pattern
+    if connector_pattern:
+        lead_pattern = rf"(?:{action_pattern})|(?:{connector_pattern})"
+
     return re.compile(
-        rf"((?:{action_pattern})|(?:{connector_pattern}))"
-        rf"[^。；;\n]{{0,50}}({left_pattern})[^。；;\n]{{0,80}}({right_pattern})",
+        rf"({lead_pattern})[^。；;\n]{{0,50}}({left_pattern})[^。；;\n]{{0,80}}({right_pattern})",
         flags=re.IGNORECASE,
     )
 
 
-def build_c_reverse_bound_pattern(left_terms: list[str], right_terms: list[str]) -> re.Pattern[str]:
+def build_c_reverse_bound_pattern(
+    left_terms: list[str],
+    right_terms: list[str],
+    action_words: list[str],
+) -> re.Pattern[str]:
     left_pattern = "|".join(re.escape(term) for term in sorted(left_terms, key=len, reverse=True) if term)
     right_pattern = "|".join(re.escape(term) for term in sorted(right_terms, key=len, reverse=True) if term)
-    action_pattern = "|".join(re.escape(term) for term in ACTION_WORDS)
+    action_pattern = "|".join(re.escape(term) for term in sorted(action_words, key=len, reverse=True) if term)
 
-    if not left_pattern or not right_pattern:
+    if not left_pattern or not right_pattern or not action_pattern:
         return re.compile(r"a^")
 
     return re.compile(
@@ -561,8 +488,17 @@ def main() -> None:
     validate_inputs(args)
     term_sets = load_term_sets(args.term_dir)
     validate_term_sets(term_sets)
-    c_forward_pattern = build_c_bound_pattern(term_sets["C_LEFT"], term_sets["C_RIGHT"])
-    c_reverse_pattern = build_c_reverse_bound_pattern(term_sets["C_LEFT"], term_sets["C_RIGHT"])
+    c_forward_pattern = build_c_bound_pattern(
+        term_sets["C_LEFT"],
+        term_sets["C_RIGHT"],
+        term_sets["ACTION_WORDS"],
+        term_sets["CONNECTOR_WORDS"],
+    )
+    c_reverse_pattern = build_c_reverse_bound_pattern(
+        term_sets["C_LEFT"],
+        term_sets["C_RIGHT"],
+        term_sets["ACTION_WORDS"],
+    )
 
     con = duckdb.connect()
     for year in args.years:

@@ -4,6 +4,7 @@ import random
 import re
 from pathlib import Path
 
+#从所有上市公司岗位抽样 每年固定样本
 
 DEFAULT_TOTAL_SAMPLE_SIZE = 200
 DEFAULT_SEED = 20260610

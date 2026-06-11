@@ -9,6 +9,7 @@ DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二�
 DEFAULT_OUTPUT = Path("advisor_recall_sample_pool_p1_p8_counts.csv")
 YEARS = range(2014, 2027)
 POOLS = [f"p{i}" for i in range(1, 9)]
+P1_P6_POOLS = POOLS[:6]
 
 
 def count_file(path: Path, pool_column: str) -> tuple[int, Counter]:
@@ -42,6 +43,7 @@ def write_summary(rows: list[dict[str, object]], output: Path) -> None:
         "total_rows",
         *[f"{pool}_count" for pool in POOLS],
         *[f"{pool}_share" for pool in POOLS],
+        *[f"{pool}_share_in_p1_p6" for pool in P1_P6_POOLS],
         "blank_count",
         "other_count",
     ]
@@ -84,6 +86,12 @@ def format_row(year: str, source_file: str, total: int, counts: Counter) -> dict
         row[f"{pool}_count"] = counts.get(pool, 0)
     for pool in POOLS:
         row[f"{pool}_share"] = f"{(counts.get(pool, 0) / total):.6%}" if total else "0.000000%"
+
+    p1_p6_total = sum(counts.get(pool, 0) for pool in P1_P6_POOLS)
+    for pool in P1_P6_POOLS:
+        row[f"{pool}_share_in_p1_p6"] = (
+            f"{(counts.get(pool, 0) / p1_p6_total):.6%}" if p1_p6_total else "0.000000%"
+        )
 
     return row
 
