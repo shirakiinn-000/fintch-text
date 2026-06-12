@@ -5,7 +5,7 @@ from pathlib import Path
 #样本均等分成两份
 
 DEFAULT_INPUT = Path(
-    r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026.csv"
+    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\advisor_recall_weighted_pool_sample_2014_2026.csv"
 )
 
 

@@ -10,7 +10,7 @@ import duckdb
 
 DEFAULT_INPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\上市公司招聘数据")
 DEFAULT_OUTPUT_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据")
-DEFAULT_TERM_DIR = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\codex\fintech 文本提取\dict\召回词")
+DEFAULT_TERM_DIR = Path(r"/dict/召回词")
 DEFAULT_TITLE_COLS = ["招聘岗位"]
 DEFAULT_YEARS = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
 DEFAULT_DUTY_COL = "职位描述"
