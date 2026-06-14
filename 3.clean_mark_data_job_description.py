@@ -9,43 +9,36 @@ from pathlib import Path
 
 #任何文件，清除马克数据网水印和html标签
 
-DEFAULT_INPUT = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026_readable.csv")
-DESC_COL = "职位描述"
+DEFAULT_INPUT = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\人工标注1000种子_full_text.csv")
+DESC_COL = "full_text"
 
 MARK_NAME = r"马\s*[-－—]?\s*克\s*[-－—]?\s*数\s*[-－—]?\s*据\s*[-－—]?\s*网?"
-MARK_TEAM = r"马\s*[-－—]?\s*克\s*团\s*队"
+MARK_TEAM = r"马\s*[-－—]?\s*克\s*[-－—]?\s*团\s*[-－—]?\s*队"
 MARK_DOMAIN = r"(?:https?://)?(?:www\.)?macrodatas\.cn"
 
+MARK_ALL = rf"(?:{MARK_NAME}|{MARK_TEAM}|{MARK_DOMAIN})"
+
 MARK_PATTERNS = [
-    rf"[（(]\s*来自\s*{MARK_NAME}\s*[）)]",
-    rf"[（(]\s*来源\s*{MARK_NAME}\s*[）)]",
-    rf"[（(]\s*来源\s*[）)]",
-    rf"[（(]\s*来\s*自\s*[）)]",
-    rf"来自\s*[:：]?\s*{MARK_NAME}",
-    rf"来源\s*[:：]?\s*{MARK_NAME}",
-    rf"来\s*[-－—]?\s*自",
-    rf"百度\s*搜索\s*{MARK_NAME}",
-    rf"更多\s*数据\s*[:：]",
-    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_NAME}\s*来源\s*[:：]?\s*{MARK_DOMAIN}",
-    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_NAME}",
-    rf"关注\s*公众号\s*{MARK_NAME}",
-    rf"关注\s*微信\s*公众号",
-    rf"来源\s*[:：]",
-    rf"来源\s*[:：]?\s*{MARK_DOMAIN}",
+    rf"[（(]\s*来自\s*{MARK_ALL}\s*[）)]",
+    rf"[（(]\s*来源\s*{MARK_ALL}\s*[）)]",
+    rf"来自\s*[:：]?\s*{MARK_ALL}",
+    rf"来源\s*[:：]?\s*{MARK_ALL}",
+    rf"百度\s*搜索\s*{MARK_ALL}",
+    rf"更多\s*数据\s*{MARK_ALL}",
+    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_ALL}\s*来源\s*[:：]?\s*{MARK_ALL}",
+    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_ALL}",
+    rf"关注\s*公众号\s*{MARK_ALL}",
+    rf"来源\s*[:：]?\s*{MARK_ALL}",
     rf"来源\s*[:：]?\s*百度",
-    rf"来自\s*[:：]?\s*{MARK_DOMAIN}",
-    MARK_DOMAIN,
-    rf"数据由\s*{MARK_TEAM}\s*整理(?:\s*[。.])?",
-    rf"数据由\s*整理(?:\s*[。.])?",
-    rf"该数据由\s*<\s*>\s*整理",
-    MARK_NAME,
+    rf"来自\s*[:：]?\s*{MARK_ALL}",
+    rf"数据由\s*{MARK_ALL}\s*整理(?:\s*[。.])?",
+    rf"（更多数据，详见\s*{MARK_ALL}）",
+    rf";&nbsp",
+    rf"&middot",
+    MARK_ALL,
 ]
 
 MARK_REGEXES = [re.compile(pattern, flags=re.IGNORECASE) for pattern in MARK_PATTERNS]
-MARK_SEGMENT_REGEXES = [
-    re.compile(rf"(?<!\S)\S*{pattern}\S*(?!\S)", flags=re.IGNORECASE)
-    for pattern in MARK_PATTERNS
-]
 HTML_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9:-]*(?:\s+[^<>]*)?/?>")
 HTML_ENTITY_RE = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]+|#[0-9]+|#x[0-9A-Fa-f]+);")
 LEFTOVER_SPACE_RE = re.compile(r"\s+")
@@ -69,7 +62,7 @@ def default_output_path(input_path: Path) -> Path:
 
 
 def has_mark_data_marker(text: str) -> bool:
-    return any(regex.search(text) for regex in MARK_REGEXES + MARK_SEGMENT_REGEXES)
+    return any(regex.search(text) for regex in MARK_REGEXES)
 
 
 def has_html_artifact(text: str) -> bool:
@@ -100,13 +93,7 @@ def clean_description_text(value: str | None) -> str:
     text = unescape_html_entities(text)
     text = HTML_TAG_RE.sub(" ", text)
 
-    for regex in MARK_SEGMENT_REGEXES:
-        text = regex.sub(" ", text)
-
     for regex in MARK_REGEXES:
-        text = regex.sub(" ", text)
-
-    for regex in MARK_SEGMENT_REGEXES:
         text = regex.sub(" ", text)
 
     text = CLEAN_SYMBOL_RE.sub("", text)

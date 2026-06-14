@@ -4,7 +4,7 @@ from pathlib import Path
 
 # 任何文件，去除所有字段中的多余空白，把文件变可读
 
-INPUT_PATH = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026.csv")
+INPUT_PATH = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026_1000.csv")
 OUTPUT_PATH = INPUT_PATH.with_name(INPUT_PATH.stem + "_readable.csv")
 
 
