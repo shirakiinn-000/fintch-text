@@ -13,33 +13,43 @@ DEFAULT_INPUT = Path(r"E:\学习资料\研\我的论文\金融科技\第二章�
 DESC_COL = "full_text"
 
 MARK_NAME = r"马\s*[-－—]?\s*克\s*[-－—]?\s*数\s*[-－—]?\s*据\s*[-－—]?\s*网?"
+MARK_NAME1 = r"马-克-数据"
 MARK_TEAM = r"马\s*[-－—]?\s*克\s*[-－—]?\s*团\s*[-－—]?\s*队"
 MARK_DOMAIN = r"(?:https?://)?(?:www\.)?macrodatas\.cn"
 
-MARK_ALL = rf"(?:{MARK_NAME}|{MARK_TEAM}|{MARK_DOMAIN})"
+MARK_ALL = rf"(?:{MARK_NAME}|{MARK_TEAM}|{MARK_DOMAIN}|{MARK_NAME1})"
 
 MARK_PATTERNS = [
-    rf"[（(]\s*来自\s*{MARK_ALL}\s*[）)]",
-    rf"[（(]\s*来源\s*{MARK_ALL}\s*[）)]",
-    rf"来自\s*[:：]?\s*{MARK_ALL}",
-    rf"来源\s*[:：]?\s*{MARK_ALL}",
-    rf"百度\s*搜索\s*{MARK_ALL}",
-    rf"更多\s*数据\s*{MARK_ALL}",
-    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_ALL}\s*来源\s*[:：]?\s*{MARK_ALL}",
-    rf"更多数据\s*[:：]?\s*搜索\s*{MARK_ALL}",
-    rf"关注\s*公众号\s*{MARK_ALL}",
-    rf"来源\s*[:：]?\s*{MARK_ALL}",
-    rf"来源\s*[:：]?\s*百度",
-    rf"来自\s*[:：]?\s*{MARK_ALL}",
-    rf"数据由\s*{MARK_ALL}\s*整理(?:\s*[。.])?",
-    rf"（更多数据，详见\s*{MARK_ALL}）",
+    rf"[（(]\s*来\s*自?\s*源?\s*{MARK_ALL}\s*[）)]",
+    rf"更多\s*数据\s*来自\s*{MARK_ALL}",
+    rf"更多\s*数据\s*来源\s*{MARK_ALL}",
+    rf"百度\s*搜索\s*[:：]?\s*{MARK_ALL}",
+    rf"百度\s*[:：]?\s*{MARK_ALL}",
+    rf"更多\s*数据\s*[:：]?\s*{MARK_ALL}",
+    rf"更多\s*数据\s*[:：]?\s*搜\s*索\s*[:：]?\s*{MARK_ALL}\s*来源\s*[:：]?\s*{MARK_ALL}",
+    rf"更多\s*数据\s*[:：]?\s*搜\s*索\s*[:：]?\s*{MARK_ALL}",
+    rf"(?:关注)?\s*(?:微信)?\s*公众号\s*[:：]?\s*{MARK_ALL}",
+    rf"\s*来\s*自?\s*源?\s*[:：]?\s*(?:百度\s*)?\s*[:：]?\s*{MARK_ALL}",
+    rf"\s*来\s*自?\s*源?\s*[:：]?\s*{MARK_ALL}",
+    rf"数据由\s*{MARK_ALL}\s*整理",
+    rf"该数据由<\s*{MARK_ALL}\s*>整理",
+    rf"（更多数据，详见\s*[:：]?\s*{MARK_ALL}）",
+    rf"关注\s*(?:微信\s*)?公众号\s*[:：]?",
+    rf"该数据由<\s*{MARK_ALL}\s*>整理",
+    rf"(?:微信\s*)?分享{MARK_ALL}",
     rf";&nbsp",
     rf"&middot",
+    rf"（该信息由用户发自手机）",
+    rf"分享\s*微信邮件。"
+    rf"搜索",
+    rf"。来源：",
+    rf"微信分享",
     MARK_ALL,
 ]
 
 MARK_REGEXES = [re.compile(pattern, flags=re.IGNORECASE) for pattern in MARK_PATTERNS]
 HTML_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9:-]*(?:\s+[^<>]*)?/?>")
+HTML = re.compile(r'^https?://[\w%:@&\-\.?~#=/]+(?:\?[\w%:@&\-\.?=~/]*)?$')
 HTML_ENTITY_RE = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]+|#[0-9]+|#x[0-9A-Fa-f]+);")
 LEFTOVER_SPACE_RE = re.compile(r"\s+")
 SPACE_BEFORE_PUNCT_RE = re.compile(r"\s+([，。；：、,.!?！？;:])")

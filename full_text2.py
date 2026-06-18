@@ -12,6 +12,7 @@ DEFAULT_OUTPUT = Path(
 )
 FULL_TEXT_COL = "full_text"
 FULL_TEXT_FIELDS = [
+    ("企业名称", "企业名称"),
     ("招聘岗位", "招聘岗位"),
     ("职位描述", "职位描述"),
 ]
