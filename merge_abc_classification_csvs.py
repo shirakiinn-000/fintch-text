@@ -6,29 +6,21 @@ from pathlib import Path
 
 
 INPUT_FILES = [
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part01.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part02.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part03.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part04.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part05.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part06.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part07.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part08.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part09.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part10.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part11.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part12.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part13.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part14.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part15.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part16.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part17.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part18.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part19.csv"),
-    Path(r"E:\浏览器下载\人工标注1000种子_full_text_part20.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part01.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part02.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part03.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part04.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part05.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part06.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part07.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part08.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part09.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part10.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part11.csv"),
+    Path(r"E:\浏览器下载\人工标注600种子_full_text_part12.csv"),
 ]
 
-OUTPUT_FILE = Path(r"E:\浏览器下载\人工标注1000种子_full_text_ABC分类_合并.csv")
+OUTPUT_FILE = Path(r"E:\浏览器下载\人工标注600种子_full_text_合并.csv")
 ENCODINGS = ("utf-8-sig", "utf-8", "gb18030")
 
 

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/fintech 文本提取.iml" filepath="$PROJECT_DIR$/.idea/fintech 文本提取.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../fintech机器学习/.idea/fintech机器学习.iml" filepath="$PROJECT_DIR$/../fintech机器学习/.idea/fintech机器学习.iml" />
     </modules>
   </component>
 </project>

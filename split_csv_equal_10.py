@@ -4,9 +4,10 @@ import argparse
 import csv
 from pathlib import Path
 
+#把样本拆分
 
-DEFAULT_SOURCE = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\人工标注1000种子_full_text.csv")
-DEFAULT_PARTS = 20
+DEFAULT_SOURCE = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\人工标注600种子_full_text.csv")
+DEFAULT_PARTS = 12
 
 
 def detect_encoding(path: Path) -> tuple[str, bool]:
