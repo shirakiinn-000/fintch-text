@@ -20,7 +20,7 @@ DEFAULT_OUTPUT_PATH = Path(
     r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026_拓展岗位召回命中.csv"
 )
 DEFAULT_EXCLUDE_SAMPLE_PATH = Path(
-    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\人工标注1000种子.csv"
+    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\人工标注1600种子_剔除重复id.csv"
 )
 
 ID_COL = "id"
