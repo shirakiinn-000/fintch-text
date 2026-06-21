@@ -40,9 +40,11 @@ MARK_PATTERNS = [
     rf";&nbsp",
     rf"&middot",
     rf"（该信息由用户发自手机）",
-    rf"分享\s*微信邮件。"
+    rf"分享\s*微信邮件",
+    rf"分享\s*微信邮件。",
     rf"搜索",
     rf"。来源：",
+    rf"来源：",
     rf"微信分享",
     MARK_ALL,
 ]
