@@ -5,10 +5,10 @@ from pathlib import Path
 
 
 DEFAULT_INPUT = Path(
-    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\期货公司重标.csv"
+    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\训练集扩展5000 保留2000review_flag=0 人工复核文件.csv"
 )
 DEFAULT_OUTPUT = Path(
-    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\期货公司重标_full_text.csv"
+    r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\训练集扩展5000 保留2000review_flag=0 人工复核文件_full_text.csv"
 )
 FULL_TEXT_COL = "full_text"
 FULL_TEXT_FIELDS = [

@@ -6,8 +6,8 @@ from pathlib import Path
 
 #把样本拆分
 
-DEFAULT_SOURCE = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\期货公司重标_full_text.csv")
-DEFAULT_PARTS = 2
+DEFAULT_SOURCE = Path(r"E:\学习资料\研\我的论文\金融科技\第二章论文\标注数据\训练集扩展5000 保留2000review_flag=0 人工复核文件.csv")
+DEFAULT_PARTS = 40
 
 
 def detect_encoding(path: Path) -> tuple[str, bool]:

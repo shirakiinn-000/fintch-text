@@ -8,12 +8,12 @@ import duckdb
 
 UTF8_BOM = b"\xef\xbb\xbf"
 DEFAULT_INPUT = Path(
-    r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026_5000.csv"
+    r"E:\学习资料\研\我的论文\金融科技\第二章论文\召回岗位数据\advisor_recall_weighted_pool_sample_2014_2026.csv"
 )
 DEFAULT_OUTPUT = DEFAULT_INPUT.with_name(
-    "advisor_recall_weighted_pool_sample_2014_2026_1000.csv"
+    "advisor_recall_weighted_pool_sample_2014_2026_5000.csv"
 )
-DEFAULT_SAMPLE_SIZE = 1000
+DEFAULT_SAMPLE_SIZE = 5000
 DEFAULT_SEED = 20260612
 POOL_COLUMN = "sample_pool"
 
